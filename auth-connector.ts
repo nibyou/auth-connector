@@ -7,7 +7,7 @@ const keycloakRealm = process.env.KEYCLOAK_REALM!;
 const keycloakClient = process.env.KEYCLOAK_CLIENT!;
 const userServiceUrl = process.env.USER_SERVICE_URL!;
 
-const login = async (username: string, password: string) => {
+export const login = async (username: string, password: string) => {
     const params = new URLSearchParams();
     params.append('grant_type', 'password');
     params.append('client_id', keycloakClient);
@@ -28,7 +28,7 @@ const login = async (username: string, password: string) => {
     return response.data;
 };
 
-const register = async (email:string, password:string, firstName:string, lastName:string, onboardingToken:string) => {
+export const register = async (email:string, password:string, firstName:string, lastName:string, onboardingToken:string) => {
   const data = {
     email,
     password,
