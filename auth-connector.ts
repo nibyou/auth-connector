@@ -60,6 +60,13 @@ export const register = async (email:string, password:string, firstName:string, 
 
 const refreshAccessWithRefreshToken = async () => {
   const refresh_token = localStorage.getItem('refreshToken');
+  if (!refresh_token) {
+    console.log('No refresh token found, needs to login again');
+    const url = new URL(window.location.href);
+    url.pathname = loginUrl;
+    window.location.replace(url);
+    return;
+  }
   const params = new URLSearchParams();
   params.append('grant_type', 'refresh_token');
   params.append('client_id', keycloakClient);
