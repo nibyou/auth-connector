@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import axios from 'axios';
 
 
@@ -14,15 +13,24 @@ export const login = async (username: string, password: string) => {
     params.append('client_id', keycloakClient);
     params.append('username', username);
     params.append('password', password);
-    const response = await axios.post(
-      `${keycloakUrl}/realms/${keycloakRealm}/protocol/openid-connect/token`,
-      params,
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+    let response;
+    try {
+      response = await axios.post(
+        `${keycloakUrl}/realms/${keycloakRealm}/protocol/openid-connect/token`,
+        params,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
         },
-      },
-    );
+      );
+    } catch (e) {
+      return Promise.reject("Login failed");
+    }
+    
+    if (!response.data.access_token) {
+      return Promise.reject("Login failed");
+    }
 
     axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.access_token}`;
 
@@ -32,9 +40,7 @@ export const login = async (username: string, password: string) => {
 
     localStorage.setItem('refreshToken', response.data.refresh_token);
 
-    setupRefreshInterval(response.data.expires_in - 30); // refresh 30 seconds before access token expires
-
-    return response.data;
+    return setupRefreshInterval(response.data.expires_in - 30) // refresh 30 seconds before access token expires
 };
 
 export const register = async (email:string, password:string, firstName:string, lastName:string, onboardingToken:string) => {
@@ -61,11 +67,7 @@ export const register = async (email:string, password:string, firstName:string, 
 const refreshAccessWithRefreshToken = async () => {
   const refresh_token = localStorage.getItem('refreshToken');
   if (!refresh_token) {
-    console.log('No refresh token found, needs to login again');
-    const url = new URL(window.location.href);
-    url.pathname = loginUrl;
-    window.location.replace(url);
-    return;
+    return Promise.reject("No refresh token found, needs to login again");
   }
   const params = new URLSearchParams();
   params.append('grant_type', 'refresh_token');
@@ -93,14 +95,17 @@ const refreshAccessWithRefreshToken = async () => {
 function setupRefreshInterval(seconds: number) {
   const refreshToken = localStorage.getItem('refreshToken');
   if (refreshToken) {
-    setInterval(() => {
-      refreshAccessWithRefreshToken();
-    }, seconds * 1000);
+    try {
+      setInterval(() => {
+        refreshAccessWithRefreshToken();
+      }, seconds * 1000);
+    } catch (e) {
+      return Promise.reject("Login failed " + e);
+    }
+
+    return Promise.resolve();
   }
   else {
-    console.log('No refresh token found, needs to login again');
-    const url = new URL(window.location.href);
-    url.pathname = loginUrl;
-    window.location.replace(url);
+    return Promise.reject("No refresh token found, needs to login again");
   }
 }
