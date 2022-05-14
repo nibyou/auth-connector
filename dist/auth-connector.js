@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.register = exports.login = void 0;
+const react_dotenv_1 = require("react-dotenv");
 const axios_1 = require("axios");
-const keycloakUrl = process.env.KEYCLOAK_URL;
-const keycloakRealm = process.env.KEYCLOAK_REALM;
-const keycloakClient = process.env.KEYCLOAK_CLIENT;
-const userServiceUrl = process.env.USER_SERVICE_URL;
-const loginUrl = process.env.LOGIN_URL;
+const keycloakUrl = react_dotenv_1.default.KEYCLOAK_URL;
+const keycloakRealm = react_dotenv_1.default.KEYCLOAK_REALM;
+const keycloakClient = react_dotenv_1.default.KEYCLOAK_CLIENT;
+const userServiceUrl = react_dotenv_1.default.USER_SERVICE_URL;
+const loginUrl = react_dotenv_1.default.LOGIN_URL;
 const login = async (username, password) => {
     const params = new URLSearchParams();
     params.append('grant_type', 'password');

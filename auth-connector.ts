@@ -1,11 +1,12 @@
+import env from 'react-dotenv';
 import axios from 'axios';
 
 
-const keycloakUrl = process.env.KEYCLOAK_URL!;
-const keycloakRealm = process.env.KEYCLOAK_REALM!;
-const keycloakClient = process.env.KEYCLOAK_CLIENT!;
-const userServiceUrl = process.env.USER_SERVICE_URL!;
-const loginUrl = process.env.LOGIN_URL!;
+const keycloakUrl = env.KEYCLOAK_URL!;
+const keycloakRealm = env.KEYCLOAK_REALM!;
+const keycloakClient = env.KEYCLOAK_CLIENT!;
+const userServiceUrl = env.USER_SERVICE_URL!;
+const loginUrl = env.LOGIN_URL!;
 
 export const login = async (username: string, password: string) => {
     const params = new URLSearchParams();
