@@ -1,6 +1,6 @@
 import env from 'react-dotenv';
 import axios from 'axios';
-
+import { AuthUser } from '@nibyou/types';
 
 const keycloakUrl = env.KEYCLOAK_URL!;
 const keycloakRealm = env.KEYCLOAK_REALM!;
