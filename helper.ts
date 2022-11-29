@@ -1,7 +1,7 @@
 import env from 'react-dotenv';
 import axios from 'axios';
 
-const axiosInstance = axios.create({});
+export const axiosInstance = axios.create({});
 
 export async function refreshAccessWithRefreshToken() {
   const keycloakUrl = env.KEYCLOAK_URL!;

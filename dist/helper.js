@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseJwt = exports.refreshAccessWithRefreshToken = void 0;
+exports.parseJwt = exports.refreshAccessWithRefreshToken = exports.axiosInstance = void 0;
 const react_dotenv_1 = require("react-dotenv");
 const axios_1 = require("axios");
-const axiosInstance = axios_1.default.create({});
+exports.axiosInstance = axios_1.default.create({});
 async function refreshAccessWithRefreshToken() {
     const keycloakUrl = react_dotenv_1.default.KEYCLOAK_URL;
     const keycloakRealm = react_dotenv_1.default.KEYCLOAK_REALM;
@@ -21,7 +21,7 @@ async function refreshAccessWithRefreshToken() {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
     });
-    axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${response.data.access_token}`;
+    exports.axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${response.data.access_token}`;
     if (localStorage.getItem('refreshToken')) {
         localStorage.removeItem('refreshToken');
     }
@@ -38,8 +38,8 @@ function parseJwt(token) {
     return JSON.parse(jsonPayload);
 }
 exports.parseJwt = parseJwt;
-axiosInstance.interceptors.request.use(async function (config) {
-    const currentAccessToken = axiosInstance.defaults.headers.common["Authorization"];
+exports.axiosInstance.interceptors.request.use(async function (config) {
+    const currentAccessToken = exports.axiosInstance.defaults.headers.common["Authorization"];
     if (currentAccessToken) {
         let parsedToken = parseJwt(("" + currentAccessToken).split(" ")[1]);
         if (parsedToken.exp - Math.floor(Date.now() / 1000) > 60) {
